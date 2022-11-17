@@ -1,0 +1,8 @@
+1. HTML/CSS tasarımı (bootstrap)
+2. Sabitleri tanımla
+3. Event listenerlaru tanımla
+4. Yeni bir task eklenmesi
+5. bir taskın silinmesi
+6. Tüm taskların silinmesi
+7. ODEV: Taskin Güncellenmesi
+8. Local Storage uygulanması

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="anahtar">
+    <input type="text"  id="deger">
+    <button onclick="writeStorage()">YAZ</button>
+    <button onclick="readStorage()">OKU</button>
+    <button onclick="removeFromStorages()">SİL</button>
+
+    <p id="localData"></p>
+    <p id="sessionData"></p>
+
+
+    <script>
+function writeStorage() {
+    var anahtarValue=document.getElementById('anahtar').value;
+    var degerValue=document.getElementById('deger').value;
+    
+
+    localStorage.setItem(anahtarValue, degerValue);
+    sessionStorage.setItem(anahtarValue, degerValue);
+}
+function readStorage() {
+    var anahtar=document.getElementById("anahtar").value
+    var data=localStorage.getItem(anahtar);
+    document.getElementById("localData").innerText=data;
+    
+}
+function removeFromStorages() {
+     localStorage.clear();
+     sessionStorage.clear();
+   //istenilen id li datayı silme
+   var anahtar=document.getElementById('anahtar').value
+   //console.log(document.getElementById('anahtar').value)
+   localStorage.removeItem(anahtar);
+}
+    </script>
+    
+</body>
+</html>

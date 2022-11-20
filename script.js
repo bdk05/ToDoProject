@@ -10,7 +10,7 @@ const taskList = document.querySelector('#task-list')
 
 let items
 var editingItem
-
+loadItems()
 eventListener()
 
 function eventListener() {
@@ -21,7 +21,7 @@ function eventListener() {
   //delete all item
   btnDeleteAll.addEventListener('click', deleteAllItem)
   //update an item
-  taskList.addEventListener('click', updateItem)
+  taskList.addEventListener('click', editItem)
 }
 
 function deleteAllItem(e) {
@@ -34,6 +34,7 @@ function deleteAllItem(e) {
       taskList.removeChild(taskList.firstChild)
     }
   }
+  localStorage.clear()
 
   e.preventDefault()
 }
@@ -45,17 +46,24 @@ function deleteItem(e) {
     if (confirm('Are you sure?')) {
       // console.log(e)
       e.target.parentElement.parentElement.remove()
+
+      //localestoragedan silme
+      deleteItemFromLS(e.target.parentElement.parentElement.textContent)
     }
   }
 }
 
 var isEdit = false
-
-function updateItem(e) {
+var index1
+function editItem(e) {
   console.log(e)
   //console.log(editingItem.parentElement.parentElement.firstChild.data)
   if (e.target.className == 'bi bi-pencil-square') {
-    input.value = e.target.parentElement.parentElement.firstChild.data
+    //  input.value = e.target.parentElement.parentElement.firstChild.data
+    input.value = e.target.parentElement.parentElement.innerText
+    //updateLS
+    index1 = getItemIndexFromLS(input.value)
+
     editingItem = e.target
     isEdit = true
   }
@@ -69,26 +77,80 @@ function addNewItem(e) {
     return
   }
   if (!isEdit) {
-    const li = document.createElement('li')
-    li.classList = 'list-group-item list-group-item-secondary'
-    li.appendChild(document.createTextNode(input.value))
-
-    const a = document.createElement('a')
-    a.classList = 'delete-item float-end'
-    a.setAttribute('href', '#')
-    a.innerHTML = '<i class="bi bi-x-circle"></i>'
-
-    const a1 = document.createElement('a')
-    a1.classList = 'edit-item float-end'
-    a1.setAttribute('href', '#')
-    a1.innerHTML = '<i class="bi bi-pencil-square"></i>'
-
-    li.appendChild(a)
-    li.appendChild(a1)
-    taskList.appendChild(li)
-    console.log(input.value)
+    createItem(input.value)
+    setItemToLS(input.value)
+    input.value = ''
   } else {
-    editingItem.parentElement.parentElement.firstChild.data = input.value
-    isEdit = false
+      updateItem();
+   
   }
+}
+
+function updateItem() {
+    //updateItem
+    editingItem.parentElement.parentElement.firstChild.data = input.value
+    //updateLocalStorage
+    items = getItemsFromLS()
+    items[index1] = input.value
+    localStorage.setItem('tasks', JSON.stringify(items))
+    input.value = ''
+    isEdit = false 
+}
+
+function createItem(text) {
+  const li = document.createElement('li')
+  li.classList = 'list-group-item list-group-item-secondary'
+  li.appendChild(document.createTextNode(text))
+
+  const a = document.createElement('a')
+  a.classList = 'delete-item float-end'
+  a.setAttribute('href', '#')
+  a.innerHTML = '<i class="bi bi-x-circle"></i>'
+
+  const a1 = document.createElement('a')
+  a1.classList = 'edit-item float-end'
+  a1.setAttribute('href', '#')
+  a1.innerHTML = '<i class="bi bi-pencil-square"></i>'
+
+  li.appendChild(a)
+  li.appendChild(a1)
+  taskList.appendChild(li)
+  console.log(text)
+}
+function setItemToLS(text) {
+  items = getItemsFromLS()
+  items.push(text)
+  localStorage.setItem('tasks', JSON.stringify(items))
+}
+function getItemsFromLS() {
+  if (localStorage.getItem('tasks') === null) items = []
+  else items = JSON.parse(localStorage.getItem('tasks'))
+  return items
+}
+//updateitem için eklendi --berna
+function getItemIndexFromLS(text) {
+  // var aranilanIndex;
+  items = getItemsFromLS()
+  items.forEach(function (todo, index) {
+    if (todo === text) {
+      index1 = index
+    }
+  })
+  return index1
+}
+function deleteItemFromLS(text) {
+  items = getItemsFromLS()
+  items.forEach(function (todo, index) {
+    if (todo === text) {
+      items.splice(index, 1)
+    }
+  })
+  localStorage.setItem('tasks', JSON.stringify(items))
+}
+
+function loadItems() {
+  items = getItemsFromLS()
+  items.forEach(function (todo) {
+    createItem(todo)
+  })
 }
